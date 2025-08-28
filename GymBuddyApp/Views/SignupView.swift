@@ -5,6 +5,8 @@ struct SignupView: View {
     @EnvironmentObject var auth: AuthViewModel
     @State private var selectedItems: [PhotosPickerItem] = []
     @State private var thumbnails: [Image] = []
+    @State private var showPassword: Bool = false
+    @State private var showConfirm: Bool = false
 
     let gymLevels = ["Beginner", "Intermediate", "Advanced"]
     let splits = ["Arnold", "Upper/Lower", "PPL", "Full Body", "Custom"]
@@ -52,8 +54,8 @@ struct SignupView: View {
                     }
 
                     VStack(alignment: .leading, spacing: 12) {
-                        SecureFieldRow(placeholder: "Password (min 6 characters)", text: $auth.password)
-                        SecureFieldRow(placeholder: "Confirm password", text: $auth.confirmPassword)
+                        PasswordRow(placeholder: "Password (min 6 characters)", text: $auth.password, show: $showPassword)
+                        PasswordRow(placeholder: "Confirm password", text: $auth.confirmPassword, show: $showConfirm)
                         if !auth.password.isEmpty || !auth.confirmPassword.isEmpty {
                             Text(passwordValidationMessage)
                                 .font(.footnote)
@@ -185,16 +187,28 @@ private struct LabeledTextEditor: View {
     }
 }
 
-private struct SecureFieldRow: View {
+private struct PasswordRow: View {
     let placeholder: String
     @Binding var text: String
+    @Binding var show: Bool
 
     var body: some View {
         HStack {
             Image(systemName: "lock.fill").foregroundColor(.coffeeSecondary)
-            SecureField(placeholder, text: $text)
-                .textContentType(.newPassword)
-                .foregroundColor(.coffeeText)
+            if show {
+                TextField(placeholder, text: $text)
+                    .autocapitalization(.none)
+                    .disableAutocorrection(true)
+                    .foregroundColor(.coffeeText)
+            } else {
+                SecureField(placeholder, text: $text)
+                    .textContentType(.newPassword)
+                    .foregroundColor(.coffeeText)
+            }
+            Button(action: { show.toggle() }) {
+                Image(systemName: show ? "eye.slash.fill" : "eye.fill")
+                    .foregroundColor(.coffeeSecondary)
+            }
         }
         .padding()
         .background(Color.coffeeWhite)

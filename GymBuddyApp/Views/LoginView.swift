@@ -2,6 +2,7 @@ import SwiftUI
 
 struct LoginView: View {
     @EnvironmentObject var auth: AuthViewModel
+    @State private var showPassword: Bool = false
 
     var body: some View {
         VStack(spacing: 0) {
@@ -40,9 +41,21 @@ struct LoginView: View {
 
                     HStack {
                         Image(systemName: "lock.fill").foregroundColor(.coffeeSecondary)
-                        SecureField("Password", text: $auth.loginPassword)
-                            .textContentType(.password)
-                            .foregroundColor(.coffeeText)
+                        if showPassword {
+                            TextField("Password", text: $auth.loginPassword)
+                                .textContentType(.password)
+                                .foregroundColor(.coffeeText)
+                                .autocapitalization(.none)
+                                .disableAutocorrection(true)
+                        } else {
+                            SecureField("Password", text: $auth.loginPassword)
+                                .textContentType(.password)
+                                .foregroundColor(.coffeeText)
+                        }
+                        Button(action: { showPassword.toggle() }) {
+                            Image(systemName: showPassword ? "eye.slash.fill" : "eye.fill")
+                                .foregroundColor(.coffeeSecondary)
+                        }
                     }
                     .padding()
                     .background(Color.coffeeWhite)
