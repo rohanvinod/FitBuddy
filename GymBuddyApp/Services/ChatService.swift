@@ -1,4 +1,5 @@
 import Foundation
+import Combine
 
 final class ChatService: ObservableObject {
     struct Conversation: Identifiable, Hashable {
