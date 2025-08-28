@@ -1,8 +1,11 @@
 import SwiftUI
 
 struct ContentView: View {
+    @StateObject private var chatService = ChatService()
+
     var body: some View {
         MainTabView()
+            .environmentObject(chatService)
     }
 }
 

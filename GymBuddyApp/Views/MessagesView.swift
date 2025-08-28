@@ -1,16 +1,15 @@
 import SwiftUI
 
 struct MessagesView: View {
-    // For demonstration, we'll use a subset of mock users as matches.
-    let matchedUsers = Array(MockDataService.users.prefix(2))
+    @EnvironmentObject var chatService: ChatService
 
     var body: some View {
         NavigationView {
             ScrollView {
                 VStack(spacing: 16) {
-                    ForEach(matchedUsers) { user in
-                        NavigationLink(destination: ChatView(partnerName: user.name)) {
-                            ConversationRowView(user: user, lastMessage: "Tap to start chatting...")
+                    ForEach(chatService.conversations) { convo in
+                        NavigationLink(destination: ChatView(partnerName: convo.partnerName)) {
+                            ConversationRowView(user: User(name: convo.partnerName, age: 0, profileImageName: "", interests: [], bio: ""), lastMessage: convo.messages.last?.message ?? "Tap to start chatting...")
                         }
                     }
                 }
@@ -32,5 +31,6 @@ struct MessagesView: View {
 struct MessagesView_Previews: PreviewProvider {
     static var previews: some View {
         MessagesView()
+            .environmentObject(ChatService())
     }
 }

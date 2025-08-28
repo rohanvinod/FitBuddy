@@ -2,7 +2,7 @@ import SwiftUI
 
 struct ChatView: View {
     let partnerName: String
-    @State private var messages = MockDataService.messages
+    @EnvironmentObject var chatService: ChatService
     @State private var newMessage: String = ""
 
     var body: some View {
@@ -10,7 +10,7 @@ struct ChatView: View {
             // Message list
             ScrollView {
                 VStack(spacing: 16) {
-                    ForEach(messages) { message in
+                    ForEach(chatService.messages(for: partnerName)) { message in
                         ChatBubbleView(message: message)
                     }
                 }
@@ -59,11 +59,9 @@ struct ChatView: View {
     }
 
     private func sendMessage() {
-        if !newMessage.isEmpty {
-            let message = ChatMessage(message: newMessage, isFromCurrentUser: true, timestamp: Date())
-            messages.append(message)
-            newMessage = ""
-        }
+        guard !newMessage.isEmpty else { return }
+        chatService.send(message: newMessage, to: partnerName)
+        newMessage = ""
     }
 }
 
@@ -71,6 +69,7 @@ struct ChatView_Previews: PreviewProvider {
     static var previews: some View {
         NavigationView {
             ChatView(partnerName: "Jess")
+                .environmentObject(ChatService())
         }
     }
 }
