@@ -20,7 +20,9 @@ struct SignupView: View {
                 // Form Card
                 VStack(alignment: .leading, spacing: 14) {
                     Group {
-                        LabeledField(icon: "person.fill", placeholder: "Name", text: $auth.name)
+                        LabeledField(icon: "person.fill", placeholder: "Full name", text: $auth.name)
+                        LabeledField(icon: "at", placeholder: "Username", text: $auth.username)
+                        LabeledTextEditor(icon: "text.justify", placeholder: "Bio (optional)", text: $auth.bio)
                         LabeledField(icon: "building.2.fill", placeholder: "Gym membership location", text: $auth.gymLocation)
                     }
 
@@ -47,6 +49,16 @@ struct SignupView: View {
                             }
                         }
                         .pickerStyle(.segmented)
+                    }
+
+                    VStack(alignment: .leading, spacing: 12) {
+                        SecureFieldRow(placeholder: "Password (min 6 characters)", text: $auth.password)
+                        SecureFieldRow(placeholder: "Confirm password", text: $auth.confirmPassword)
+                        if !auth.password.isEmpty || !auth.confirmPassword.isEmpty {
+                            Text(passwordValidationMessage)
+                                .font(.footnote)
+                                .foregroundColor(passwordsValid ? .green : .red)
+                        }
                     }
 
                     VStack(alignment: .leading, spacing: 8) {
@@ -89,8 +101,8 @@ struct SignupView: View {
                             .background(Color.coffeePrimary)
                             .cornerRadius(12)
                     }
-                    .disabled(auth.name.trimmingCharacters(in: .whitespaces).isEmpty || auth.gymLocation.isEmpty)
-                    .opacity(auth.name.trimmingCharacters(in: .whitespaces).isEmpty || auth.gymLocation.isEmpty ? 0.6 : 1)
+                    .disabled(!formValid)
+                    .opacity(formValid ? 1 : 0.6)
                 }
                 .padding(20)
                 .background(Color.coffeeBackground)
@@ -102,6 +114,21 @@ struct SignupView: View {
         .onChange(of: selectedItems) { _, newItems in
             Task { await loadAssets(from: newItems) }
         }
+    }
+
+    private var passwordsValid: Bool {
+        !auth.password.isEmpty && auth.password == auth.confirmPassword && auth.password.count >= 6
+    }
+
+    private var passwordValidationMessage: String {
+        passwordsValid ? "Passwords match" : "Passwords must match and be at least 6 characters"
+    }
+
+    private var formValid: Bool {
+        !auth.name.trimmingCharacters(in: .whitespaces).isEmpty &&
+        !auth.username.trimmingCharacters(in: .whitespaces).isEmpty &&
+        !auth.gymLocation.trimmingCharacters(in: .whitespaces).isEmpty &&
+        passwordsValid
     }
 
     private func loadAssets(from items: [PhotosPickerItem]) async {
@@ -130,6 +157,41 @@ private struct LabeledField: View {
         HStack {
             Image(systemName: icon).foregroundColor(.coffeeSecondary)
             TextField(placeholder, text: $text)
+                .autocapitalization(.none)
+                .disableAutocorrection(true)
+        }
+        .padding()
+        .background(Color.coffeeWhite)
+        .cornerRadius(12)
+    }
+}
+
+private struct LabeledTextEditor: View {
+    let icon: String
+    let placeholder: String
+    @Binding var text: String
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            HStack { Image(systemName: icon).foregroundColor(.coffeeSecondary); Text(placeholder).foregroundColor(.coffeeSecondary) }
+            TextEditor(text: $text)
+                .frame(minHeight: 80)
+                .padding(8)
+                .background(Color.coffeeWhite)
+                .cornerRadius(12)
+        }
+    }
+}
+
+private struct SecureFieldRow: View {
+    let placeholder: String
+    @Binding var text: String
+
+    var body: some View {
+        HStack {
+            Image(systemName: "lock.fill").foregroundColor(.coffeeSecondary)
+            SecureField(placeholder, text: $text)
+                .textContentType(.newPassword)
         }
         .padding()
         .background(Color.coffeeWhite)

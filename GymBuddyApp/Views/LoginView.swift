@@ -2,7 +2,6 @@ import SwiftUI
 
 struct LoginView: View {
     @EnvironmentObject var auth: AuthViewModel
-    @State private var name: String = ""
 
     var body: some View {
         VStack(spacing: 0) {
@@ -28,17 +27,33 @@ struct LoginView: View {
 
                 VStack(spacing: 12) {
                     HStack {
-                        Image(systemName: "person.fill")
-                            .foregroundColor(.coffeeSecondary)
-                        TextField("Name", text: $name)
-                            .textContentType(.name)
+                        Image(systemName: "at").foregroundColor(.coffeeSecondary)
+                        TextField("Username", text: $auth.loginUsername)
+                            .textContentType(.username)
+                            .autocapitalization(.none)
+                            .disableAutocorrection(true)
+                    }
+                    .padding()
+                    .background(Color.coffeeWhite)
+                    .cornerRadius(12)
+
+                    HStack {
+                        Image(systemName: "lock.fill").foregroundColor(.coffeeSecondary)
+                        SecureField("Password", text: $auth.loginPassword)
+                            .textContentType(.password)
                     }
                     .padding()
                     .background(Color.coffeeWhite)
                     .cornerRadius(12)
                 }
 
-                Button(action: { auth.login(name: name) }) {
+                if let error = auth.loginError {
+                    Text(error)
+                        .font(.footnote)
+                        .foregroundColor(.red)
+                }
+
+                Button(action: { auth.login() }) {
                     Text("Log In")
                         .fontWeight(.semibold)
                         .foregroundColor(.coffeeWhite)
@@ -47,8 +62,8 @@ struct LoginView: View {
                         .background(Color.coffeePrimary)
                         .cornerRadius(12)
                 }
-                .disabled(name.trimmingCharacters(in: .whitespaces).isEmpty)
-                .opacity(name.trimmingCharacters(in: .whitespaces).isEmpty ? 0.6 : 1)
+                .disabled(auth.loginUsername.trimmingCharacters(in: .whitespaces).isEmpty || auth.loginPassword.isEmpty)
+                .opacity(auth.loginUsername.trimmingCharacters(in: .whitespaces).isEmpty || auth.loginPassword.isEmpty ? 0.6 : 1)
 
                 HStack {
                     Rectangle().frame(height: 1).foregroundColor(Color.coffeeSecondary.opacity(0.3))
