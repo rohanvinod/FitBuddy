@@ -32,6 +32,7 @@ struct LoginView: View {
                             .textContentType(.username)
                             .autocapitalization(.none)
                             .disableAutocorrection(true)
+                            .foregroundColor(.coffeeText)
                     }
                     .padding()
                     .background(Color.coffeeWhite)
@@ -41,6 +42,7 @@ struct LoginView: View {
                         Image(systemName: "lock.fill").foregroundColor(.coffeeSecondary)
                         SecureField("Password", text: $auth.loginPassword)
                             .textContentType(.password)
+                            .foregroundColor(.coffeeText)
                     }
                     .padding()
                     .background(Color.coffeeWhite)

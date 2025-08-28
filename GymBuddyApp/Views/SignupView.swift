@@ -159,6 +159,7 @@ private struct LabeledField: View {
             TextField(placeholder, text: $text)
                 .autocapitalization(.none)
                 .disableAutocorrection(true)
+                .foregroundColor(.coffeeText)
         }
         .padding()
         .background(Color.coffeeWhite)
@@ -179,6 +180,7 @@ private struct LabeledTextEditor: View {
                 .padding(8)
                 .background(Color.coffeeWhite)
                 .cornerRadius(12)
+                .foregroundColor(.coffeeText)
         }
     }
 }
@@ -192,6 +194,7 @@ private struct SecureFieldRow: View {
             Image(systemName: "lock.fill").foregroundColor(.coffeeSecondary)
             SecureField(placeholder, text: $text)
                 .textContentType(.newPassword)
+                .foregroundColor(.coffeeText)
         }
         .padding()
         .background(Color.coffeeWhite)
