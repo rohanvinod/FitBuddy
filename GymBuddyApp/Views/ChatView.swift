@@ -21,23 +21,35 @@ struct ChatView: View {
             // Message Input Area
             HStack(spacing: 15) {
                 TextField("Message...", text: $newMessage)
+                    .font(.system(size: 16, weight: .medium, design: .rounded))
                     .padding(.horizontal, 20)
-                    .padding(.vertical, 12)
-                    .background(Color.coffeeWhite)
+                    .padding(.vertical, 14)
+                    .background(Color.coffeeCard)
                     .clipShape(Capsule())
                     .overlay(
                         Capsule()
-                            .stroke(Color.coffeeSecondary, lineWidth: 1)
+                            .stroke(Color.coffeePrimary.opacity(0.2), lineWidth: 1)
                     )
-                    .font(.body)
                 
                 Button(action: sendMessage) {
-                    Image(systemName: "paperplane.fill")
-                        .font(.title2)
-                        .foregroundColor(.coffeeWhite)
-                        .padding(15)
-                        .background(Color.coffeePrimary)
-                        .clipShape(Circle())
+                    ZStack {
+                        Circle()
+                            .fill(
+                                AnyShapeStyle(
+                                    LinearGradient(
+                                        gradient: Gradient(colors: [Color.coffeePrimary, Color.coffeeSecondary]),
+                                        startPoint: .topLeading,
+                                        endPoint: .bottomTrailing
+                                    )
+                                )
+                            )
+                            .frame(width: 50, height: 50)
+                            .shadow(color: .coffeeShadowStrong, radius: 8, x: 0, y: 4)
+                        
+                        Image(systemName: "paperplane.fill")
+                            .font(.system(size: 18, weight: .semibold, design: .rounded))
+                            .foregroundColor(.coffeeCard)
+                    }
                 }
             }
             .padding()

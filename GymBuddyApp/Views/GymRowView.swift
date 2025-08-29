@@ -5,33 +5,52 @@ struct GymRowView: View {
 
     var body: some View {
         HStack(spacing: 20) {
+            // Gym Image
             SafeImageView(imageName: gym.imageName, placeholderSymbol: "figure.strengthtraining.traditional")
                 .scaledToFill()
-                .frame(width: 70, height: 70)
-                .cornerRadius(25)
+                .frame(width: 80, height: 80)
+                .cornerRadius(20)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 20)
+                        .stroke(Color.coffeePrimary.opacity(0.1), lineWidth: 1)
+                )
+                .shadow(color: Color.coffeeShadow, radius: 5, x: 0, y: 2)
 
-            VStack(alignment: .leading, spacing: 6) {
+            // Gym Info
+            VStack(alignment: .leading, spacing: 8) {
                 Text(gym.name)
-                    .font(.headline)
-                    .fontWeight(.bold)
-                    .foregroundColor(.coffeeWhite)
+                    .font(.system(size: 18, weight: .semibold, design: .rounded))
+                    .foregroundColor(.coffeeText)
+                    .lineLimit(2)
 
                 Text(gym.facilities.first ?? "Fitness & Fun")
-                    .font(.subheadline)
-                    .foregroundColor(.coffeeWhite.opacity(0.8))
+                    .font(.system(size: 14, weight: .medium, design: .rounded))
+                    .foregroundColor(.coffeeTextSecondary)
                     .lineLimit(1)
+                
+                // Hours info
+                if let firstHour = gym.hours.first {
+                    HStack(spacing: 6) {
+                        Image(systemName: "clock.fill")
+                            .font(.system(size: 12))
+                            .foregroundColor(.coffeePrimary)
+                        Text(firstHour)
+                            .font(.system(size: 12, weight: .medium, design: .rounded))
+                            .foregroundColor(.coffeeTextLight)
+                    }
+                }
             }
             
             Spacer()
 
+            // Chevron indicator
             Image(systemName: "chevron.right")
-                .font(.body.weight(.semibold))
-                .foregroundColor(.coffeeWhite.opacity(0.6))
+                .font(.system(size: 14, weight: .semibold))
+                .foregroundColor(.coffeeTextSecondary)
         }
-        .padding()
-        .background(Color.coffeePrimary)
-        .cornerRadius(30)
-        .shadow(color: .coffeePrimary.opacity(0.3), radius: 8, y: 4)
+        .padding(.horizontal, 20)
+        .padding(.vertical, 16)
+        .background(Color.coffeeCard)
     }
 }
 

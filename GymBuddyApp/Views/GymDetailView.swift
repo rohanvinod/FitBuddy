@@ -22,34 +22,59 @@ struct GymDetailView: View {
                     // Top Image
                     SafeImageView(imageName: gym.imageName, placeholderSymbol: "figure.strengthtraining.traditional")
                         .aspectRatio(contentMode: .fill)
-                        .frame(height: 300)
-                        .clipShape(RoundedRectangle(cornerRadius: 35, style: .continuous))
-                        .padding(.horizontal)
-                        .padding(.top)
+                        .frame(height: 320)
+                        .clipShape(RoundedRectangle(cornerRadius: 35))
+                        .padding(.horizontal, 20)
+                        .padding(.top, 20)
+                        .shadow(color: Color.coffeeShadowStrong, radius: 15, x: 0, y: 8)
 
                     // Main Details Card
-                    VStack(alignment: .leading, spacing: 25) {
-                        Text(gym.name)
-                            .font(.largeTitle)
-                            .fontWeight(.bold)
-                            .foregroundColor(.coffeeText)
+                    VStack(alignment: .leading, spacing: 28) {
+                        // Gym Name
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text(gym.name)
+                                .font(.system(size: 32, weight: .bold, design: .rounded))
+                                .foregroundColor(.coffeeText)
+                            
+                            Text("Premium Fitness Destination")
+                                .font(.system(size: 16, weight: .medium, design: .rounded))
+                                .foregroundColor(.coffeeTextSecondary)
+                        }
 
-                        InfoRow(symbol: "location.fill", title: "Address", content: gym.address)
-                        InfoRow(symbol: "clock.fill", title: "Hours", content: gym.hours.joined(separator: "\n"))
-                        InfoRow(symbol: "sparkles", title: "Facilities", content: gym.facilities.joined(separator: ", "))
+                        // Info Rows
+                        VStack(spacing: 20) {
+                            InfoRow(symbol: "location.fill", title: "Address", content: gym.address)
+                            InfoRow(symbol: "clock.fill", title: "Hours", content: gym.hours.joined(separator: "\n"))
+                            InfoRow(symbol: "sparkles", title: "Facilities", content: gym.facilities.joined(separator: ", "))
+                        }
 
                         // Map View
-                        Map(initialPosition: .region(region)) {
-                            Marker(gym.name, coordinate: gym.coordinate)
-                                .tint(Color.coffeePrimary)
+                        VStack(alignment: .leading, spacing: 16) {
+                            Text("Location")
+                                .font(.system(size: 20, weight: .bold, design: .rounded))
+                                .foregroundColor(.coffeeText)
+                            
+                            Map(initialPosition: .region(region)) {
+                                Marker(gym.name, coordinate: gym.coordinate)
+                                    .tint(Color.coffeePrimary)
+                            }
+                            .frame(height: 280)
+                            .cornerRadius(35)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 25)
+                                    .stroke(Color.coffeePrimary.opacity(0.1), lineWidth: 1)
+                            )
+                            .shadow(color: Color.coffeeShadow, radius: 10, x: 0, y: 5)
                         }
-                        .frame(height: 250)
-                        .cornerRadius(25)
                     }
-                    .padding(25)
-                    .background(Color.coffeeWhite)
+                    .padding(28)
+                    .background(Color.coffeeCard)
                     .cornerRadius(35)
-                    .padding()
+                    .shadow(color: Color.coffeeShadowStrong, radius: 20, x: 0, y: 10)
+                    .padding(.horizontal, 20)
+                    .padding(.top, 20)
+                    
+                    Spacer(minLength: 50)
                 }
             }
         }
@@ -71,24 +96,24 @@ struct InfoRow: View {
     let content: String
 
     var body: some View {
-        HStack(alignment: .top, spacing: 15) {
+        HStack(alignment: .top, spacing: 20) {
             Image(systemName: symbol)
-                .font(.title2)
+                .font(.system(size: 22))
                 .foregroundColor(.coffeePrimary)
-                .frame(width: 30)
+                .frame(width: 35)
 
-            VStack(alignment: .leading, spacing: 4) {
+            VStack(alignment: .leading, spacing: 6) {
                 Text(title)
-                    .font(.headline)
-                    .fontWeight(.bold)
+                    .font(.system(size: 18, weight: .semibold, design: .rounded))
                     .foregroundColor(.coffeeText)
                 Text(content)
-                    .font(.body)
-                    .foregroundColor(.coffeeText.opacity(0.7))
+                    .font(.system(size: 16, weight: .medium, design: .rounded))
+                    .foregroundColor(.coffeeTextSecondary)
                     .lineLimit(nil)
             }
             Spacer()
         }
+        .padding(.vertical, 8)
     }
 }
 
@@ -98,12 +123,16 @@ struct CustomBackButton: View {
 
     var body: some View {
         Button(action: { presentationMode.wrappedValue.dismiss() }) {
-            Image(systemName: "chevron.left")
-                .font(.title2.weight(.bold))
-                .foregroundColor(.coffeeWhite)
-                .padding(12)
-                .background(Color.coffeePrimary)
-                .clipShape(Circle())
+            ZStack {
+                Circle()
+                    .fill(Color.coffeeCard)
+                    .frame(width: 44, height: 44)
+                    .shadow(color: Color.coffeeShadowStrong, radius: 8, x: 0, y: 4)
+                
+                Image(systemName: "chevron.left")
+                    .font(.system(size: 18, weight: .bold, design: .rounded))
+                    .foregroundColor(.coffeePrimary)
+            }
         }
     }
 }

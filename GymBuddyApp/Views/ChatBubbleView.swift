@@ -10,14 +10,33 @@ struct ChatBubbleView: View {
             }
 
             Text(message.message)
-                .padding(.horizontal, 16)
-                .padding(.vertical, 12)
-                .background(message.isFromCurrentUser ? Color.coffeePrimary : Color.coffeeWhite)
-                .foregroundColor(message.isFromCurrentUser ? .coffeeWhite : .coffeeText)
-                .clipShape(RoundedRectangle(cornerRadius: 25, style: .continuous))
+                .font(.system(size: 16, weight: .medium, design: .rounded))
+                .padding(.horizontal, 18)
+                .padding(.vertical, 14)
+                .background(
+                    message.isFromCurrentUser ? 
+                    AnyShapeStyle(
+                        LinearGradient(
+                            gradient: Gradient(colors: [Color.coffeePrimary, Color.coffeeSecondary]),
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    ) : AnyShapeStyle(Color.coffeeCard)
+                )
+                .foregroundColor(message.isFromCurrentUser ? .coffeeCard : .coffeeText)
+                .clipShape(RoundedRectangle(cornerRadius: 22, style: .continuous))
                 .overlay(
-                    RoundedRectangle(cornerRadius: 25, style: .continuous)
-                        .stroke(message.isFromCurrentUser ? Color.clear : Color.coffeeSecondary, lineWidth: 1)
+                    RoundedRectangle(cornerRadius: 22, style: .continuous)
+                        .stroke(
+                            message.isFromCurrentUser ? Color.clear : Color.coffeePrimary.opacity(0.2),
+                            lineWidth: 1
+                        )
+                )
+                .shadow(
+                    color: message.isFromCurrentUser ? .coffeeShadowStrong : .coffeeShadow,
+                    radius: message.isFromCurrentUser ? 8 : 4,
+                    x: 0,
+                    y: message.isFromCurrentUser ? 4 : 2
                 )
 
             if !message.isFromCurrentUser {
@@ -31,9 +50,17 @@ struct ChatBubbleView: View {
 
 struct ChatBubbleView_Previews: PreviewProvider {
     static var previews: some View {
-        VStack {
-            ChatBubbleView(message: MockDataService.messages[0])
-            ChatBubbleView(message: MockDataService.messages[1])
+        VStack(spacing: 20) {
+            ChatBubbleView(message: ChatMessage(
+                message: "Hey! Saw we matched. I'm also into strength training.",
+                isFromCurrentUser: false,
+                timestamp: Date()
+            ))
+            ChatBubbleView(message: ChatMessage(
+                message: "Awesome! When do you usually work out?",
+                isFromCurrentUser: true,
+                timestamp: Date()
+            ))
         }
         .padding()
         .background(Color.coffeeBackground)

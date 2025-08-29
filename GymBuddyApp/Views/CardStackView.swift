@@ -7,19 +7,41 @@ struct CardStackView: View {
     var body: some View {
         VStack {
             ZStack {
-                if viewModel.users.isEmpty {
-                    Text("No more buddies to show.")
-                        .font(.headline)
-                        .foregroundColor(.coffeeText)
+                if viewModel.userProfiles.isEmpty {
+                    // Enhanced empty state
+                    VStack(spacing: 24) {
+                        ZStack {
+                            Circle()
+                                .fill(Color.coffeePrimary.opacity(0.1))
+                                .frame(width: 120, height: 120)
+                            
+                            Image(systemName: "person.2.circle")
+                                .font(.system(size: 60))
+                                .foregroundColor(.coffeePrimary)
+                        }
+                        
+                        VStack(spacing: 12) {
+                            Text("No More Buddies")
+                                .font(.system(size: 24, weight: .bold, design: .rounded))
+                                .foregroundColor(.coffeeText)
+                            
+                            Text("Check back later for new gym partners!")
+                                .font(.system(size: 16, weight: .medium, design: .rounded))
+                                .foregroundColor(.coffeeTextSecondary)
+                                .multilineTextAlignment(.center)
+                                .padding(.horizontal)
+                        }
+                    }
+                    .padding(.top, 60)
                 } else {
-                    ForEach(viewModel.users) { user in
-                        CardView(user: user)
+                    ForEach(viewModel.userProfiles) { userProfile in
+                        CardView(userProfile: userProfile)
                             .padding(.horizontal, 30)
-                            .zIndex(zIndex(for: user))
-                            .offset(x: offsetForCard(user: user), y: 0)
-                            .rotationEffect(rotationForCard(user: user))
+                            .zIndex(zIndex(for: userProfile))
+                            .offset(x: offsetForCard(userProfile: userProfile), y: 0)
+                            .rotationEffect(rotationForCard(userProfile: userProfile))
                             .gesture(
-                                isTopCard(user: user) ? createDragGesture() : nil
+                                isTopCard(userProfile: userProfile) ? createDragGesture() : nil
                             )
                     }
                 }
@@ -71,23 +93,23 @@ struct CardStackView: View {
         }
     }
 
-    private func isTopCard(user: User) -> Bool {
-        return viewModel.users.last?.id == user.id
+    private func isTopCard(userProfile: UserProfile) -> Bool {
+        return viewModel.userProfiles.last?.id == userProfile.id
     }
 
-    private func zIndex(for user: User) -> Double {
-        Double(viewModel.users.firstIndex(of: user) ?? 0)
+    private func zIndex(for userProfile: UserProfile) -> Double {
+        Double(viewModel.userProfiles.firstIndex(of: userProfile) ?? 0)
     }
 
-    private func offsetForCard(user: User) -> CGFloat {
-        if isTopCard(user: user) {
+    private func offsetForCard(userProfile: UserProfile) -> CGFloat {
+        if isTopCard(userProfile: userProfile) {
             return dragOffset.width
         }
         return 0
     }
 
-    private func rotationForCard(user: User) -> Angle {
-        if isTopCard(user: user) {
+    private func rotationForCard(userProfile: UserProfile) -> Angle {
+        if isTopCard(userProfile: userProfile) {
             return .degrees(Double(dragOffset.width / 20.0))
         }
         return .degrees(0)
@@ -98,21 +120,31 @@ enum SwipeDirection {
     case left, right
 }
 
-// Helper View for Action Buttons
+// Enhanced Action Buttons
 struct ActionButton: View {
     let symbol: String
     let action: () -> Void
 
     var body: some View {
         Button(action: action) {
-            Image(systemName: symbol)
-                .font(.title)
-                .fontWeight(.bold)
-                .foregroundColor(.coffeeWhite)
-                .padding(25)
-                .background(Color.coffeePrimary)
-                .clipShape(Circle())
-                .shadow(color: .coffeePrimary.opacity(0.4), radius: 10, y: 5)
+            ZStack {
+                Circle()
+                    .fill(
+                        AnyShapeStyle(
+                            LinearGradient(
+                                gradient: Gradient(colors: symbol == "xmark" ? [Color.coffeeError, Color.coffeeError.opacity(0.8)] : [Color.coffeeSuccess, Color.coffeeSuccess.opacity(0.8)]),
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            )
+                        )
+                    )
+                    .frame(width: 60, height: 60)
+                    .shadow(color: .coffeeShadowStrong, radius: 10, x: 0, y: 5)
+                
+                Image(systemName: symbol)
+                    .font(.system(size: 24, weight: .bold, design: .rounded))
+                    .foregroundColor(.coffeeCard)
+            }
         }
     }
 }
